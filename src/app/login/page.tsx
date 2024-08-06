@@ -4,6 +4,7 @@ import { userAtom } from "@/atoms/userAtom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useAtom } from "jotai"
+import { useRouter } from "next/navigation"
 import { useState } from "react"
 
 const LoginPage = () => {
@@ -12,6 +13,8 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [user, setUser] = useAtom(userAtom)
+
+  const router = useRouter()
 
   const loginUser = async (email: string, password: string) => {
     try {
@@ -45,6 +48,12 @@ const LoginPage = () => {
     loginUser(email, password)
   }
 
+  const handleRedirect = (e: { preventDefault: () => void }) => {
+    e.preventDefault()
+
+    router.push('/signup')
+  }
+
   if (!user) return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24">
       <form onSubmit={handleSubmit} className="flex flex-col items-center min-w-[350px] p-5 border-solid border-slate-400 border rounded-lg">
@@ -54,8 +63,10 @@ const LoginPage = () => {
         <label htmlFor="password" className="self-start text-xs mt-2">Password</label>
         <Input type={showPassword ? "text" : "password"} placeholder="Password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} className="border-slate-400" />
         <p className="text-xs self-end ml-1 mt-1 cursor-pointer" onClick={() => setShowPassword(!showPassword)}>{showPassword ? 'Hide password' : 'Show password'}</p>
-        <Button type="submit" className="w-[50%] mt-5">Login</Button>
+        <Button id="login" type="submit" className="w-[50%] mt-5">Login</Button>
         {error && <h1 className="text-sm mt-2 text-red-500">{error}</h1>}
+        <p className="text-xs mt-5">New user? Sign up now!</p>
+        <Button id="signup" onClick={handleRedirect} className="w-[50%] mt-1">Signup</Button>
       </form>
     </main>
   )
