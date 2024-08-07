@@ -3,9 +3,11 @@
 import { userAtom } from "@/atoms/userAtom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { MyTailSpin } from "@/components/ui/tailspin"
 import { useAtom } from "jotai"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import validator from "validator"
 
 const SignupPage = () => {
   const [email, setEmail] = useState('')
@@ -14,11 +16,39 @@ const SignupPage = () => {
   const [username, setUsername] = useState('')
   const [showPasswords, setShowPasswords] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
   const [user, setUser] = useAtom(userAtom)
 
   const router = useRouter()
 
   const signupUser = async (email: string, password: string, username: string) => {
+    setLoading(true)
+    setError(null)
+
+    if (!email || !password) {
+      setError('All fields are required')
+      setLoading(false)
+      return
+    }
+
+    if (!validator.isEmail(email)) {
+      setError('Email is not valid')
+      setLoading(false)
+      return
+    }
+
+    if (!validator.isStrongPassword(password)) {
+      setError('Password not strong enough')
+      setLoading(false)
+      return
+    }
+
+    if (password !== passwordRepeat) {
+      setError('Passwords are not equal')
+      setLoading(false)
+      return
+    }
+
     try {
       const response = await fetch('https://threadnest-backend.onrender.com/api/users/signup', {
         method: 'POST',
@@ -44,6 +74,9 @@ const SignupPage = () => {
       }
     } catch (error) {
       console.error('Error:', error);
+      setError('An unexpected error occured, please try again later')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -78,10 +111,22 @@ const SignupPage = () => {
         <label htmlFor="passwordRepeat" className="self-start text-xs mt-2">Repeat password</label>
         <Input type={showPasswords ? "text" : "password"} placeholder="Repeat password" id="passwordRepeat" value={passwordRepeat} onChange={(e) => setPasswordRepeat(e.target.value)} className="border-slate-400" />
         <p className="text-xs self-end ml-1 mt-1 cursor-pointer" onClick={() => setShowPasswords(!showPasswords)}>{showPasswords ? 'Hide passwords' : 'Show passwords'}</p>
-        <Button type="submit" className="w-[50%] mt-5">Signup</Button>
+        <Button type="submit" className="w-[50%] mt-5" disabled={loading}>
+          {loading ? (
+            <MyTailSpin size={25} />
+          ) : (
+            'Signup'
+          )}
+        </Button>
         {error && <h1 className="text-sm mt-2 text-red-500">{error}</h1>}
         <p className="text-xs mt-5">Already have an account? Log in here!</p>
-        <Button id="login" onClick={handleRedirect} className="w-[50%] mt-1">Login</Button>
+        <Button id="login" onClick={handleRedirect} className="w-[50%] mt-1" disabled={loading}>
+          {loading ? (
+            <MyTailSpin size={25} />
+          ) : (
+            'To login page'
+          )}
+        </Button>
       </form>
     </main>
   )
