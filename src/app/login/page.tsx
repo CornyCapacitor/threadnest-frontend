@@ -25,10 +25,14 @@ const LoginPage = () => {
 
     if (!email || !password) {
       setError('All fields are required')
+      setLoading(false)
+      return
     }
 
     if (!validator.isEmail(email)) {
       setError('Email is not valid')
+      setLoading(false)
+      return
     }
 
     try {
@@ -76,9 +80,9 @@ const LoginPage = () => {
       <form onSubmit={handleSubmit} className="flex flex-col items-center min-w-[350px] p-5 border-solid border-slate-400 border rounded-lg">
         <h1 className="text-2xl">Login</h1>
         <label htmlFor="email" className="self-start text-xs mt-5">Email</label>
-        <Input type="email" placeholder="Email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} className="border-slate-400" />
+        <Input type="email" placeholder="Email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} className="border-slate-400" disabled={loading} />
         <label htmlFor="password" className="self-start text-xs mt-2">Password</label>
-        <Input type={showPassword ? "text" : "password"} placeholder="Password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} className="border-slate-400" />
+        <Input type={showPassword ? "text" : "password"} placeholder="Password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} className="border-slate-400" disabled={loading} />
         <p className="text-xs self-end ml-1 mt-1 cursor-pointer" onClick={() => setShowPassword(!showPassword)}>{showPassword ? 'Hide password' : 'Show password'}</p>
         <Button id="login" type="submit" className="w-[50%] mt-5" disabled={loading}>
           {loading ? (

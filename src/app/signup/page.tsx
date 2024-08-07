@@ -103,13 +103,13 @@ const SignupPage = () => {
       <form onSubmit={handleSubmit} className="flex flex-col items-center min-w-[350px] p-5 border-solid border-slate-400 border rounded-lg">
         <h1 className="text-2xl">Signup</h1>
         <label htmlFor="email" className="self-start text-xs mt-5">Email</label>
-        <Input type="email" placeholder="Email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} className="border-slate-400" />
+        <Input type="email" placeholder="Email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} className="border-slate-400" disabled={loading} />
         <label htmlFor="username" className="self-start text-xs mt-2">Username</label>
-        <Input type="text" placeholder="Username" id="username" value={username} onChange={(e) => setUsername(e.target.value)} className="border-slate-400" />
+        <Input type="text" placeholder="Username" id="username" value={username} onChange={(e) => setUsername(e.target.value)} className="border-slate-400" disabled={loading} />
         <label htmlFor="password" className="self-start text-xs mt-2">Password</label>
-        <Input type={showPasswords ? "text" : "password"} placeholder="Password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} className="border-slate-400" />
+        <Input type={showPasswords ? "text" : "password"} placeholder="Password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} className="border-slate-400" disabled={loading} />
         <label htmlFor="passwordRepeat" className="self-start text-xs mt-2">Repeat password</label>
-        <Input type={showPasswords ? "text" : "password"} placeholder="Repeat password" id="passwordRepeat" value={passwordRepeat} onChange={(e) => setPasswordRepeat(e.target.value)} className="border-slate-400" />
+        <Input type={showPasswords ? "text" : "password"} placeholder="Repeat password" id="passwordRepeat" value={passwordRepeat} onChange={(e) => setPasswordRepeat(e.target.value)} className="border-slate-400" disabled={loading} />
         <p className="text-xs self-end ml-1 mt-1 cursor-pointer" onClick={() => setShowPasswords(!showPasswords)}>{showPasswords ? 'Hide passwords' : 'Show passwords'}</p>
         <Button type="submit" className="w-[50%] mt-5" disabled={loading}>
           {loading ? (
