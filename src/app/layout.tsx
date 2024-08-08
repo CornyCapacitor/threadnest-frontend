@@ -1,3 +1,4 @@
+import { Navbar } from "@/components/layout/Navbar";
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.css";
@@ -15,8 +16,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body className={roboto.className}>{children}</body>
+    <html lang="en" className="dark h-full">
+      <body className={`${roboto.className} flex flex-col min-h-screen`}>
+        <Navbar />
+        <main className="flex flex-grow flex-col">{children}</main>
+      </body>
     </html>
   );
 }

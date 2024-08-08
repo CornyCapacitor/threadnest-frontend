@@ -99,7 +99,7 @@ const SignupPage = () => {
   }, [user, router])
 
   if (!user) return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24">
+    <main className="flex flex-grow flex-col items-center justify-center p-24">
       <form onSubmit={handleSubmit} className="flex flex-col items-center min-w-[350px] p-5 border-solid border-slate-400 border rounded-lg">
         <h1 className="text-2xl">Signup</h1>
         <label htmlFor="email" className="self-start text-xs mt-5">Email</label>
