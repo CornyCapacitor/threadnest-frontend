@@ -1,26 +1,19 @@
 'use client'
 
+import { postsAtom } from "@/atoms/postsAtom";
 import { userAtom } from "@/atoms/userAtom";
+import PostsView from "@/components/layout/PostsView";
 import { MyTailSpin } from "@/components/ui/tailspin";
 import { isTokenExpired } from "@/utils/isTokenExpired";
 import { useAtom } from "jotai";
 import { useCallback, useEffect, useState } from "react";
-
-type Post = {
-  _id: string;
-  author_id: string;
-  commentsCount: number;
-  content: string;
-  title: string;
-  upvoted: boolean;
-  upvotesCount: number;
-};
+import { Post } from "./types/postType";
 
 export default function Home() {
   const [user, setUser] = useAtom(userAtom)
   const [pageLoading, setPageLoading] = useState(true)
   const [postsPage, setPostsPage] = useState(1)
-  const [posts, setPosts] = useState<Post[] | null>(null)
+  const [posts, setPosts] = useAtom<Post[] | null>(postsAtom)
 
   const fetchPosts = useCallback(async (page: number) => {
     console.log('Posts fetching')
@@ -89,20 +82,9 @@ export default function Home() {
   }
 
   if (user && posts) return (
-    <main className="flex flex-grow items-center justify-center p-24">
+    <main className="flex flex-col flex-grow items-center justify-center p-24">
       <h1 className="text-3xl">Hello again <span className="text-blue-500">{user.username}</span></h1>
-      <div>
-        {posts.map((post) => (
-          <div className="flex flex-col" key={post._id} id={post._id}>
-            <p>Id: {post._id}</p>
-            <p>Author id: {post.author_id}</p>
-            <p>Comments: {post.commentsCount}</p>
-            <p>Title: {post.title}</p>
-            <p>Upvoted: {post.upvoted}</p>
-            <p>Upvotes: {post.upvotesCount}</p>
-          </div>
-        ))}
-      </div>
+      <PostsView />
     </main>
   )
 
