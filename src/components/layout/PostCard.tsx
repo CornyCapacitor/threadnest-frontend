@@ -7,7 +7,7 @@ type PostCardProps = {
 const PostCard = ({ post }: PostCardProps) => {
   return (
     <div className="flex flex-col border-white border w-full">
-      <p>{post._id}</p>
+      <p>{post.author_username}</p>
       <p>{post.title}</p>
       <p>{post.content}</p>
       <div className="flex gap-2">
