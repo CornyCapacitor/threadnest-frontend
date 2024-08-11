@@ -17,6 +17,7 @@ const SignupPage = () => {
   const [showPasswords, setShowPasswords] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const [user, setUser] = useAtom(userAtom)
 
   const router = useRouter()
@@ -94,9 +95,19 @@ const SignupPage = () => {
 
   useEffect(() => {
     if (user) {
-      router.push('/login')
+      router.push('/')
+    } else {
+      setIsLoading(false)
     }
   }, [user, router])
+
+  if (isLoading) {
+    return (
+      <main className="flex flex-grow flex-col items-center justify-center p-24">
+        <MyTailSpin size={25} />
+      </main>
+    )
+  }
 
   if (!user) return (
     <main className="flex flex-grow flex-col items-center justify-center p-24">

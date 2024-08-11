@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 import { MyTailSpin } from "@/components/ui/tailspin"
 import { useAtom } from "jotai"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import validator from 'validator'
 
 const LoginPage = () => {
@@ -15,6 +15,7 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const [user, setUser] = useAtom(userAtom)
 
   const router = useRouter()
@@ -75,6 +76,22 @@ const LoginPage = () => {
     router.push('/signup')
   }
 
+  useEffect(() => {
+    if (user) {
+      router.push('/')
+    } else {
+      setIsLoading(false)
+    }
+  }, [user, router])
+
+  if (isLoading) {
+    return (
+      <main className="flex flex-grow flex-col items-center justify-center p-24">
+        <MyTailSpin size={25} />
+      </main>
+    )
+  }
+
   if (!user) return (
     <main className="flex flex-grow flex-col items-center justify-center p-24">
       <form onSubmit={handleSubmit} className="flex flex-col items-center min-w-[350px] p-5 border-solid border-slate-400 border rounded-lg">
@@ -101,15 +118,6 @@ const LoginPage = () => {
           )}
         </Button>
       </form>
-    </main>
-  )
-
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24">
-      <div className="flex flex-col items-center min-w-[350px] p-5 border-solid border-slate-400 border rounded-lg">
-        <h1>Hello again {user.username}!</h1>
-        <Button onClick={() => setUser(null)} className="w-[50%] mt-5">Logout</Button>
-      </div>
     </main>
   )
 }
