@@ -43,6 +43,7 @@ export const UpvoteButton = ({ count, isUpvoted, postId }: { count: number, isUp
 
       if (response.ok) {
         const data = await response.json()
+
         // Realistic update
         setUpvoted(data.upvoted)
         setUpvotesCount(data.upvotesCount)

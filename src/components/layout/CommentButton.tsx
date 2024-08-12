@@ -1,11 +1,14 @@
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import { Button } from '../ui/button'
 
-const handleRedirect = (postId: string) => {
-  console.log(`Redirecting to post with id: ${postId}`)
-}
-
 export const CommentButton = ({ count, postId }: { count: number, postId: string }) => {
+  const router = useRouter()
+
+  const handleRedirect = (postId: string) => {
+    router.push(`/post/${postId}`)
+  }
+
   return (
     <Button onClick={() => handleRedirect(postId)} className={'flex items-center justify-center w-16'}>
       <Image src="/comment.svg" alt="Upvote icon" width={16} height={16} />
