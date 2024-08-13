@@ -15,16 +15,16 @@ export const Navbar = () => {
           ThreadNest {user ? '(logged)' : '(not logged)'}
         </h1>
       </Link>
-      <div className="flex p-2 gap-3">
+      <div className="flex p-2 gap-3 mr-2">
         {user ? (
-          <Button className="w-20" onClick={() => setUser(null)}>Logout</Button>
+          <Button className="w-20 bg-red-500 hover:bg-red-600 text-slate-100 font-semibold py-2 px-4 rounded-md" onClick={() => setUser(null)}>Logout</Button>
         ) : (
           <>
             <Link href="/login">
-              <Button className="w-20">Login</Button>
+              <Button className="w-20 bg-blue-500 hover:bg-blue-600 text-slate-100 font-semibold py-2 px-4 rounded-md">Login</Button>
             </Link>
             <Link href="/signup">
-              <Button className="w-20">Signup</Button>
+              <Button className="w-20 bg-green-500 hover:bg-green-600 text-slate-100 font-semibold py-2 px-4 rounded-md">Signup</Button>
             </Link>
           </>
         )}

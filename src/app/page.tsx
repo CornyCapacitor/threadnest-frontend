@@ -1,9 +1,10 @@
 'use client'
 
-import { postsAtom } from "@/atoms/postsAtom";
+import { postsAtom, postsPageAtom } from "@/atoms/postsAtom";
 import { userAtom } from "@/atoms/userAtom";
+import CreatePostCard from "@/components/layout/CreatePostCard";
 import PostsView from "@/components/layout/PostsView";
-import { MyTailSpin } from "@/components/ui/tailspin";
+import PostCardSkeleton from "@/components/skeletons/PostCardSkeleton";
 import { isTokenExpired } from "@/utils/isTokenExpired";
 import { useAtom } from "jotai";
 import { useCallback, useEffect, useState } from "react";
@@ -12,7 +13,7 @@ import { Post } from "./types/postType";
 export default function Home() {
   const [user, setUser] = useAtom(userAtom)
   const [pageLoading, setPageLoading] = useState(true)
-  const [postsPage, setPostsPage] = useState(1)
+  const [postsPage, setPostsPage] = useAtom(postsPageAtom)
   const [posts, setPosts] = useAtom<Post[] | null>(postsAtom)
 
   const fetchPosts = useCallback(async (page: number) => {
@@ -56,41 +57,40 @@ export default function Home() {
     } catch (error) {
       console.error(error)
     }
-  }, [setUser, user]);
-
-  useEffect(() => {
-    if (user && pageLoading) {
-      fetchPosts(postsPage).then(() => setPageLoading(false));
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, pageLoading, fetchPosts]);
+  }, [user]);
 
   useEffect(() => {
-    if (user !== undefined) {
-      setPageLoading(false)
-      return
+    if (user && pageLoading && postsPage === 1) {
+      fetchPosts(postsPage)
     }
-    setPageLoading(true)
-  }, [user])
 
-  if (pageLoading) {
-    return (
-      <main className="flex flex-grow items-center justify-center p-24">
-        <h1 className="text-3xl"><MyTailSpin size={50} /></h1>
-      </main>
-    )
-  }
+    setPageLoading(false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   if (user && posts) return (
-    <main className="flex flex-col flex-grow items-center justify-center p-24">
-      <h1 className="text-3xl">Hello again <span className="text-blue-500">{user.username}</span></h1>
-      <PostsView />
+    <main className="flex flex-grow items-center justify-center pt-12 pb-12 gap-2">
+      {pageLoading ?
+        <div className="flex flex-col gap-2 w-[75%]">
+          <PostCardSkeleton />
+          <PostCardSkeleton />
+          <PostCardSkeleton />
+        </div>
+        :
+        <div className="flex flex-col w-[75%] gap-20">
+          <CreatePostCard />
+          <PostsView />
+        </div>
+      }
     </main>
   )
 
-  return (
-    <main className="flex flex-grow items-center justify-center p-24">
-      <h1 className="text-3xl">ThreadNest App</h1>
-    </main>
-  );
+  if (!pageLoading && !user) {
+    return (
+      <main className="flex flex-grow items-center justify-center p-24">
+        <h1 className="text-3xl">ThreadNest App</h1>
+      </main>
+    );
+  }
 }

@@ -66,9 +66,8 @@ export const UpvoteButton = ({ count, isUpvoted, postId }: { count: number, isUp
       console.error(error)
     }
   }
-
   return (
-    <Button onClick={() => handleUpvote(postId)} className={`flex items-center justify-center w-16 ${upvoted ? 'bg-blue-400 hover:bg-blue-500' : ''}`}>
+    <Button onClick={() => handleUpvote(postId)} className={`flex items-center justify-center w-16 rounded-md ${upvoted ? 'bg-green-500 hover:bg-green-600' : ''}`}>
       <Image src="/upvote.svg" alt="Upvote icon" width={16} height={16} />
       <span className="font-semibold mt-1">{upvotesCount}</span>
     </Button>

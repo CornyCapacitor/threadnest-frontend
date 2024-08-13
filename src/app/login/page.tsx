@@ -93,29 +93,59 @@ const LoginPage = () => {
   }
 
   if (!user) return (
-    <main className="flex flex-grow flex-col items-center justify-center p-24">
-      <form onSubmit={handleSubmit} className="flex flex-col items-center min-w-[350px] p-5 border-solid border-slate-400 border rounded-lg">
-        <h1 className="text-2xl">Login</h1>
-        <label htmlFor="email" className="self-start text-xs mt-5">Email</label>
-        <Input type="email" placeholder="Email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} className="border-slate-400" disabled={loading} />
-        <label htmlFor="password" className="self-start text-xs mt-2">Password</label>
-        <Input type={showPassword ? "text" : "password"} placeholder="Password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} className="border-slate-400" disabled={loading} />
-        <p className="text-xs self-end ml-1 mt-1 cursor-pointer" onClick={() => setShowPassword(!showPassword)}>{showPassword ? 'Hide password' : 'Show password'}</p>
-        <Button id="login" type="submit" className="w-[50%] mt-5" disabled={loading}>
-          {loading ? (
-            <MyTailSpin size={25} />
-          ) : (
-            'Login'
-          )}
+    <main className="flex flex-grow flex-col items-center justify-center p-24 bg-slate-900">
+      <form onSubmit={handleSubmit} className="flex flex-col items-center min-w-[350px] p-6 bg-slate-800 border border-slate-700 rounded-lg shadow-md">
+        <h1 className="text-3xl font-semibold text-slate-100">Login</h1>
+
+        <label htmlFor="email" className="self-start text-sm text-slate-200 mt-4">Email</label>
+        <Input
+          type="email"
+          placeholder="Email"
+          id="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full p-3 bg-slate-700 text-slate-100 border border-slate-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          disabled={loading}
+        />
+
+        <label htmlFor="password" className="self-start text-sm text-slate-200 mt-4">Password</label>
+        <Input
+          type={showPassword ? "text" : "password"}
+          placeholder="Password"
+          id="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full p-3 bg-slate-700 text-slate-100 border border-slate-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          disabled={loading}
+        />
+
+        <p
+          className="text-sm text-blue-400 cursor-pointer mt-1 self-start"
+          onClick={() => setShowPassword(!showPassword)}
+          aria-disabled={loading}
+        >
+          {showPassword ? 'Hide password' : 'Show password'}
+        </p>
+
+        <Button
+          id="login"
+          type="submit"
+          className="w-full mt-5 bg-blue-500 hover:bg-blue-600 text-slate-100 font-semibold py-2 px-4 rounded-md"
+          disabled={loading}
+        >
+          {loading ? <MyTailSpin size={25} /> : 'Login'}
         </Button>
+
         {error && <h1 className="text-sm mt-2 text-red-500">{error}</h1>}
-        <p className="text-xs mt-5">New user? Sign up now!</p>
-        <Button id="signup" onClick={handleRedirect} className="w-[50%] mt-1" disabled={loading}>
-          {loading ? (
-            <MyTailSpin size={25} />
-          ) : (
-            'To signup page'
-          )}
+
+        <p className="text-xs text-slate-200 mt-5">New user? Sign up now!</p>
+        <Button
+          id="signup"
+          onClick={handleRedirect}
+          className="w-full mt-1 bg-green-500 hover:bg-green-600 text-slate-100 font-semibold py-2 px-4 rounded-md"
+          disabled={loading}
+        >
+          {loading ? <MyTailSpin size={25} /> : 'To signup page'}
         </Button>
       </form>
     </main>
