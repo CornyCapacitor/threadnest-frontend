@@ -45,6 +45,7 @@ export default function Home() {
       if (response.ok) {
         console.log("Data fetched succesfully")
         const data = await response.json();
+        console.log(data)
         setPosts((prevPosts) => ([...prevPosts, ...data]));
         setPostsPage((prevPage) => prevPage + 1);
         setPageLoading(false)

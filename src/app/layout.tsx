@@ -16,7 +16,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark h-full">
+    <html lang="en" className="dark h-full px-1">
       <head>
         <link rel="icon" href="threadnest.svg" />
       </head>

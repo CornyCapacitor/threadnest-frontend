@@ -7,4 +7,5 @@ export type Post = {
   title: string;
   upvoted: boolean;
   upvotesCount: number;
+  createdAt: string;
 };

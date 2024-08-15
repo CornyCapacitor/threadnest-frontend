@@ -10,9 +10,11 @@ export const UpvoteButton = ({ count, isUpvoted, postId }: { count: number, isUp
   const [user, setUser] = useAtom(userAtom)
   const [upvoted, setUpvoted] = useState(isUpvoted)
   const [upvotesCount, setUpvotesCount] = useState(count)
+  const [loading, setLoading] = useState(false)
 
   const handleUpvote = async (postId: string) => {
     console.log(`Upvoting/devoting post with id: ${postId}`)
+    setLoading(true)
     if (!user) return
 
     try {
@@ -64,12 +66,15 @@ export const UpvoteButton = ({ count, isUpvoted, postId }: { count: number, isUp
       }
     } catch (error) {
       console.error(error)
+    } finally {
+      setLoading(false)
     }
   }
   return (
     <Button
       onClick={() => handleUpvote(postId)}
       className={`flex items-center justify-center w-16 rounded-md ${upvoted ? 'bg-green-500 hover:bg-green-600' : ''}`}
+      disabled={loading}
     >
       <Image
         src="/upvote.svg"
