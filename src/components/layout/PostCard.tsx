@@ -23,11 +23,11 @@ const PostCard = ({ post }: PostCardProps) => {
         </p>
       </div>
 
-      <p className="text-lg text-slate-100 font-semibold">
+      <p className="text-lg text-slate-100 font-semibold text-wrap break-all">
         {post.title}
       </p>
 
-      <p className="text-slate-300">
+      <p className="text-slate-300 text-wrap break-all">
         {post.content}
       </p>
 
