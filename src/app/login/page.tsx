@@ -93,7 +93,7 @@ const LoginPage = () => {
   }
 
   if (!user) return (
-    <main className="flex flex-grow flex-col items-center justify-center p-24 bg-slate-900">
+    <main className="flex flex-grow flex-col items-center justify-center p-24">
       <form onSubmit={handleSubmit} className="flex flex-col items-center min-w-[350px] p-6 bg-slate-800 border border-slate-700 rounded-lg shadow-md">
         <h1 className="text-3xl font-semibold text-slate-100">Login</h1>
 
@@ -122,7 +122,6 @@ const LoginPage = () => {
         <p
           className="text-sm text-blue-400 cursor-pointer mt-1 self-start"
           onClick={() => setShowPassword(!showPassword)}
-          aria-disabled={loading}
         >
           {showPassword ? 'Hide password' : 'Show password'}
         </p>

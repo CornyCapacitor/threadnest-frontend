@@ -17,6 +17,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark h-full">
+      <head>
+        <link rel="icon" href="threadnest.svg" />
+      </head>
       <body className={`${roboto.className} flex flex-col min-h-screen`}>
         <Navbar />
         <main className="flex flex-grow flex-col">{children}</main>

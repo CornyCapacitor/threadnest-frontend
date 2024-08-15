@@ -110,7 +110,7 @@ const SignupPage = () => {
   }
 
   if (!user) return (
-    <main className="flex flex-grow flex-col items-center justify-center p-24 bg-slate-900">
+    <main className="flex flex-grow flex-col items-center justify-center p-24">
       <form onSubmit={handleSubmit} className="flex flex-col items-center min-w-[350px] p-6 bg-slate-800 border border-slate-700 rounded-lg shadow-md">
         <h1 className="text-3xl font-semibold text-slate-100">Signup</h1>
 

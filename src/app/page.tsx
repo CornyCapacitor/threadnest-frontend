@@ -14,7 +14,7 @@ export default function Home() {
   const [user, setUser] = useAtom(userAtom)
   const [pageLoading, setPageLoading] = useState(true)
   const [postsPage, setPostsPage] = useAtom(postsPageAtom)
-  const [posts, setPosts] = useAtom<Post[] | null>(postsAtom)
+  const [posts, setPosts] = useAtom<Post[]>(postsAtom)
 
   const fetchPosts = useCallback(async (page: number) => {
     console.log('Posts fetching')
@@ -43,9 +43,11 @@ export default function Home() {
       })
 
       if (response.ok) {
+        console.log("Data fetched succesfully")
         const data = await response.json();
-        setPosts((prevPosts) => (prevPosts ? [...prevPosts, ...data] : data));
+        setPosts((prevPosts) => ([...prevPosts, ...data]));
         setPostsPage((prevPage) => prevPage + 1);
+        setPageLoading(false)
       } else {
         console.error('Fetch failed with status:', response.status);
         const errorData = await response.json();
@@ -65,24 +67,29 @@ export default function Home() {
       fetchPosts(postsPage)
     }
 
-    setPageLoading(false)
+    if (posts && posts.length > 0) {
+      setPageLoading(false)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
-  if (user && posts) return (
+  if (user) return (
     <main className="flex flex-grow items-center justify-center pt-12 pb-12 gap-2">
-      {pageLoading ?
-        <div className="flex flex-col gap-2 w-[75%]">
-          <PostCardSkeleton />
-          <PostCardSkeleton />
-          <PostCardSkeleton />
-        </div>
-        :
-        <div className="flex flex-col w-[75%] gap-20">
-          <CreatePostCard />
-          <PostsView />
-        </div>
-      }
+      <div className="flex flex-col gap-2 w-full md:w-[75%]">
+        {posts?.length > 0 && (
+          <>
+            <CreatePostCard />
+            <PostsView />
+          </>
+        )}
+        {pageLoading && (
+          <>
+            <PostCardSkeleton />
+            <PostCardSkeleton />
+            <PostCardSkeleton />
+          </>
+        )}
+      </div>
     </main>
   )
 

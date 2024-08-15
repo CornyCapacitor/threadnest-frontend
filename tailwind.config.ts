@@ -19,7 +19,8 @@ const config = {
     },
     extend: {
       fontFamily: {
-        roboto: ['Roboto', 'sans-serif']
+        roboto: ['Roboto', 'sans-serif'],
+        mono: ['Share Tech Mono', 'monospace'],
       },
       colors: {
         border: "hsl(var(--border))",
