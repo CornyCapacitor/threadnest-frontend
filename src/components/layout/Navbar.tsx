@@ -1,5 +1,6 @@
 'use client'
 
+import { postsAtom } from '@/atoms/postsAtom'
 import { userAtom } from '@/atoms/userAtom'
 import { useAtom } from 'jotai'
 import Image from 'next/image'
@@ -8,13 +9,14 @@ import { Button } from "../ui/button"
 
 export const Navbar = () => {
   const [user, setUser] = useAtom(userAtom)
+  const [posts, setPosts] = useAtom(postsAtom)
 
   return (
     <nav className="flex border-b border-solid border-slate-400 items-center justify-between py-2 px-2">
       <Link href="/" className="flex p-2">
         <Image src="threadnest.svg" alt="Threadnest logo" width={40} height={40} />
         <h1 className="text-3xl px-4 font-mono hidden md:block"> {/* Width of "w-10" is set temporarily for coding purpose */}
-          ThreadNest {user ? <span className="text-blue-500">{user.username}</span> : '(not logged)'}
+          ThreadNest {user && <span className="text-blue-500">{user.username}</span>}
         </h1>
       </Link>
       <div className="flex p-2 gap-3">
