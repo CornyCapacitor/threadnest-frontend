@@ -15,7 +15,7 @@ const CreatePostCard = () => {
   const [user, setUser] = useAtom(userAtom)
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
-  const [error, setError] = useState('')
+  const [error, setError] = useState<string | null>('')
   const [loading, setLoading] = useState(false)
   const [posts, setPosts] = useAtom<Post[]>(postsAtom)
 
@@ -64,6 +64,7 @@ const CreatePostCard = () => {
         console.log(data)
         setTitle('')
         setContent('')
+        setError(null)
       }
     } catch (error) {
       console.error('Error:', error)

@@ -13,13 +13,18 @@ export const Navbar = () => {
     <nav className="flex border-b border-solid border-slate-400 items-center justify-between py-2 px-2">
       <Link href="/" className="flex p-2">
         <Image src="threadnest.svg" alt="Threadnest logo" width={40} height={40} />
-        <h1 className="text-3xl px-4 py-2 font-mono">
-          ThreadNest {user ? '(logged)' : '(not logged)'}
+        <h1 className="text-3xl px-4 font-mono hidden md:block"> {/* Width of "w-10" is set temporarily for coding purpose */}
+          ThreadNest {user ? <span className="text-blue-500">{user.username}</span> : '(not logged)'}
         </h1>
       </Link>
       <div className="flex p-2 gap-3">
         {user ? (
-          <Button className="w-20 bg-red-500 hover:bg-red-600 text-slate-100 font-semibold py-2 px-4 rounded-md" onClick={() => setUser(null)}>Logout</Button>
+          <>
+            <Link href="/settings">
+              <Button className="w-20 flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-slate-100 font-semibold py-2 px-4 rounded-md">Settings</Button>
+            </Link>
+            <Button className="w-20 bg-red-500 hover:bg-red-600 text-slate-100 font-semibold py-2 px-4 rounded-md" onClick={() => setUser(null)}>Logout</Button>
+          </>
         ) : (
           <>
             <Link href="/login">
