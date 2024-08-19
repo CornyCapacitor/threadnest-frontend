@@ -2,14 +2,15 @@
 
 import { userAtom } from "@/atoms/userAtom"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { MyTailSpin } from "@/components/ui/tailspin"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { isTokenExpired } from "@/utils/isTokenExpired"
 import { useAtom } from "jotai"
 import { useState } from "react"
 
+import ChangePassword from "@/components/layout/ChangePassword"
+import ChangeUsername from "@/components/layout/ChangeUsername"
+import DeleteAccount from "@/components/layout/DeleteAccount"
 import Image from "next/image"
 import validator from "validator"
 
@@ -236,13 +237,7 @@ const SettingsPage = () => {
 
                 {error && <h1 className="text-sm mt-2 text-red-500">{error}</h1>}
 
-                <Button
-                  className="w-48 flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-slate-100 font-semibold py-2 px-4 rounded-md"
-                  type="submit"
-                  disabled={loading}
-                >
-                  {loading ? <MyTailSpin size={25} /> : 'Change username'}
-                </Button>
+                <ChangeUsername loading={loading} username={newUsername} />
               </form>
             </AccordionContent>
           </AccordionItem>
@@ -277,30 +272,14 @@ const SettingsPage = () => {
 
                 {error && <h1 className="text-sm mt-2 text-red-500">{error}</h1>}
 
-                <Button
-                  className="w-48 flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-slate-100 font-semibold py-2 px-4 rounded-md"
-                  type="submit"
-                  disabled={loading}
-                >
-                  {loading ? <MyTailSpin size={25} /> : 'Change password'}
-                </Button>
+                <ChangePassword loading={loading} />
               </form>
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-3">
             <AccordionTrigger onClick={() => setError(null)}>Delete account</AccordionTrigger>
             <AccordionContent>
-              <div className="flex flex-col gap-2">
-                <p>Deleting your account will also delete all your related posts, comments and upvotes. Make sure it is considered decision.</p>
-                <p>Are you sure you want to delete your account? This change is irreversible!</p>
-                <Button
-                  className="w-48 flex items-center justify-center bg-red-500 hover:bg-red-600 text-slate-100 font-semibold py-2 px-4 rounded-md"
-                  onClick={() => deleteUser()}
-                  disabled={loading}
-                >
-                  {loading ? <MyTailSpin size={25} /> : 'Delete account'}
-                </Button>
-              </div>
+              <DeleteAccount loading={loading} deleteUser={deleteUser} />
             </AccordionContent>
           </AccordionItem>
         </Accordion>
