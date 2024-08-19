@@ -1,9 +1,11 @@
 'use client'
 
+import { postsAtom } from "@/atoms/postsAtom"
 import { userAtom } from "@/atoms/userAtom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { MyTailSpin } from "@/components/ui/tailspin"
+import { errorToast } from "@/components/ui/toasts"
 import { useAtom } from "jotai"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -17,14 +19,16 @@ const SignupPage = () => {
   const [showPasswords, setShowPasswords] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
+  const [pageLoading, setPageLoading] = useState(true)
   const [user, setUser] = useAtom(userAtom)
+  const [posts, setPosts] = useAtom(postsAtom)
 
   const router = useRouter()
 
   const signupUser = async (email: string, password: string, username: string) => {
     setLoading(true)
     setError(null)
+    setPosts([])
 
     if (!email || !password) {
       setError('All fields are required')
@@ -74,8 +78,9 @@ const SignupPage = () => {
         setError(data.error)
       }
     } catch (error) {
-      console.error('Error:', error);
-      setError('An unexpected error occured, please try again later')
+      errorToast({
+        text: `${error}`
+      })
     } finally {
       setLoading(false)
     }
@@ -94,22 +99,26 @@ const SignupPage = () => {
   }
 
   useEffect(() => {
-    if (user) {
-      router.push('/')
+    if (user === null) {
+      setPageLoading(false)
     } else {
-      setIsLoading(false)
+      setPageLoading(false)
     }
-  }, [user, router])
+  }, [user])
 
-  if (isLoading) {
+  if (pageLoading) {
     return (
       <main className="flex flex-grow flex-col items-center justify-center p-24">
-        <MyTailSpin size={25} />
+        <MyTailSpin size={50} />
       </main>
     )
   }
 
-  if (!user) return (
+  if (user) {
+    return router.push('/')
+  }
+
+  return (
     <main className="flex flex-grow flex-col items-center justify-center p-24">
       <form onSubmit={handleSubmit} className="flex flex-col items-center min-w-[350px] p-6 bg-slate-800 border border-slate-700 rounded-lg shadow-md">
         <h1 className="text-3xl font-semibold text-slate-100">Signup</h1>

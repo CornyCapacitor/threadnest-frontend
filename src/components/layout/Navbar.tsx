@@ -1,15 +1,22 @@
 'use client'
 
-import { postsAtom } from '@/atoms/postsAtom'
 import { userAtom } from '@/atoms/userAtom'
 import { useAtom } from 'jotai'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from "../ui/button"
+import { successToast } from '../ui/toasts'
 
 export const Navbar = () => {
   const [user, setUser] = useAtom(userAtom)
-  const [posts, setPosts] = useAtom(postsAtom)
+
+  const handleLogout = () => {
+    setUser(null)
+
+    successToast({
+      text: 'Logging out'
+    })
+  }
 
   return (
     <nav className="flex border-b border-solid border-slate-400 items-center justify-between py-2 px-2">
@@ -25,7 +32,7 @@ export const Navbar = () => {
             <Link href="/settings">
               <Button className="w-20 flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-slate-100 font-semibold py-2 px-4 rounded-md">Settings</Button>
             </Link>
-            <Button className="w-20 bg-red-500 hover:bg-red-600 text-slate-100 font-semibold py-2 px-4 rounded-md" onClick={() => setUser(null)}>Logout</Button>
+            <Button className="w-20 bg-red-500 hover:bg-red-600 text-slate-100 font-semibold py-2 px-4 rounded-md" onClick={handleLogout}>Logout</Button>
           </>
         ) : (
           <>
