@@ -4,11 +4,7 @@ import Image from 'next/image'
 import { CommentButton } from './CommentButton'
 import { UpvoteButton } from './UpvoteButton'
 
-type PostCardProps = {
-  post: Post
-}
-
-const PostCard = ({ post }: PostCardProps) => {
+const PostCard = ({ post, disabledCommButton }: { post: Post, disabledCommButton?: boolean }) => {
   return (
     <div className="min-w-[350px] flex flex-col p-5 rounded-lg w-full gap-5 bg-slate-900 border border-slate-700 shadow-md">
       <div className="flex gap-2 justify-between pb-2 border-b border-slate-700">
@@ -44,6 +40,7 @@ const PostCard = ({ post }: PostCardProps) => {
         <CommentButton
           postId={post._id}
           count={post.commentsCount}
+          disabled={disabledCommButton}
         />
       </div>
     </div>

@@ -50,9 +50,9 @@ export default function Home() {
         setPostsPage((prevPage) => prevPage + 1);
         setPageLoading(false)
       } else {
-        console.error('Fetch failed with status:', response.status);
-        const errorData = await response.json();
-        console.error('Error data:', errorData);
+        console.error('Fetch failed with status:', response.status)
+        const errorData = await response.json()
+        console.error('Error data:', errorData)
         if (errorData.error === 'TokenExpiredError: jwt expired') {
           console.log('You should relogin')
         }
@@ -75,8 +75,8 @@ export default function Home() {
   }, [user]);
 
   if (user) return (
-    <main className="flex flex-grow items-center justify-center pt-12 pb-12 gap-2">
-      <div className="flex flex-col gap-2 w-full md:w-[75%]">
+    <main className="flex flex-grow items-center justify-center pt-12 pb-12">
+      <div className="flex flex-col gap-2 w-full lg:w-[60%]">
         {posts?.length > 0 && (
           <>
             <CreatePostCard />

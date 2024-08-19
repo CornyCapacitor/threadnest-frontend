@@ -2,7 +2,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Button } from '../ui/button'
 
-export const CommentButton = ({ count, postId }: { count: number, postId: string }) => {
+export const CommentButton = ({ count, postId, disabled }: { count: number, postId: string, disabled?: boolean }) => {
   const router = useRouter()
 
   const handleRedirect = (postId: string) => {
@@ -13,6 +13,7 @@ export const CommentButton = ({ count, postId }: { count: number, postId: string
     <Button
       onClick={() => handleRedirect(postId)}
       className='flex items-center justify-center w-16 bg-orange-600 hover:bg-orange-700'
+      disabled={disabled ? true : false}
     >
       <Image
         src="/comment.svg"
