@@ -15,6 +15,10 @@ const Toast = Swal.mixin({
     toast.onmouseenter = Swal.stopTimer
     toast.onmouseleave = Swal.resumeTimer
 
+    toast.addEventListener('click', () => {
+      Swal.close()
+    })
+
     const progressBar = toast.querySelector('.swal2-progress-bar') as HTMLElement;
     if (progressBar) {
       progressBar.style.background = '#3b82f6'; // Ustaw kolor progress bara
