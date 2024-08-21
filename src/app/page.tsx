@@ -8,7 +8,7 @@ import PostCardSkeleton from "@/components/skeletons/PostCardSkeleton";
 import { isTokenExpired } from "@/utils/isTokenExpired";
 import { useAtom } from "jotai";
 import { useCallback, useEffect, useState } from "react";
-import { Post } from "./types/postType";
+import { Post } from "./types/dataTypes";
 
 export default function Home() {
   const [user, setUser] = useAtom(userAtom)

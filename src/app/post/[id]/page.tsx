@@ -6,7 +6,7 @@ import { useAtom } from "jotai"
 import { useRouter } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
 
-import { Post } from "@/app/types/postType"
+import { Post } from "@/app/types/dataTypes"
 import { AddNewComment } from "@/components/layout/AddNewComment"
 import { CommentsSection } from "@/components/layout/CommentsSection"
 import PostCard from "@/components/layout/PostCard"
@@ -86,8 +86,8 @@ const PostPage = ({ params }: { params: { id: string } }) => {
       <main className="flex flex-col flex-grow items-center pt-12 pb-12">
         <div className="flex flex-col gap-2 w-full lg:w-[60%]">
           <PostCard post={post} disabledCommButton={true} />
-          <AddNewComment />
-          <CommentsSection />
+          <AddNewComment id={id} />
+          <CommentsSection id={id} />
         </div>
       </main>
     )

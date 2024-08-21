@@ -9,3 +9,13 @@ export type Post = {
   upvotesCount: number;
   createdAt: string;
 };
+
+export type Comment = {
+  _id: string,
+  author_id: string,
+  author_username: string,
+  content: string,
+  upvotesCount: number,
+  upvoted: boolean,
+  createdAt: string,
+}
