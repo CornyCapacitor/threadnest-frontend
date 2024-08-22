@@ -1,4 +1,4 @@
-import { Post } from "@/app/types/postType";
+import { Post } from "@/app/types/dataTypes";
 import { atom } from "jotai";
 
 export const postsAtom = atom<Post[]>([])

@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react"
 
-import { Comment } from "@/app/types/dataTypes"
+import { commentsAtom } from "@/atoms/commentsAtom"
 import { userAtom } from "@/atoms/userAtom"
 import { isTokenExpired } from "@/utils/isTokenExpired"
 import { useAtom } from "jotai"
 
 export const CommentsSection = ({ id }: { id: string }) => {
   const [user, setUser] = useAtom(userAtom)
-  const [comments, setComments] = useState<Comment[] | null>(null)
+  const [comments, setComments] = useAtom(commentsAtom)
   const [loading, setLoading] = useState(false)
 
   const fetchComments = async () => {
@@ -30,7 +30,7 @@ export const CommentsSection = ({ id }: { id: string }) => {
         headers['Authorization'] = `Bearer ${token}`
       }
 
-      const response = await fetch(`https://threadnest-backend.onrender.com/api/comments${id}`, {
+      const response = await fetch(`https://threadnest-backend.onrender.com/api/comments/${id}`, {
         method: 'GET',
         headers: headers
       })
@@ -62,7 +62,7 @@ export const CommentsSection = ({ id }: { id: string }) => {
     <div className="min-w-[350px] flex flex-col p-5 rounded-lg w-full gap-5 bg-slate-900 border border-slate-700 shadow-md">
       {comments && (
         comments.map((comment) => (
-          <div key={comment._id}>{comment._id}</div>
+          <div key={comment._id}>{comment.content}</div>
         ))
       )}
     </div>

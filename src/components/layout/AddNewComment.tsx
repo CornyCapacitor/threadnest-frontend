@@ -1,3 +1,4 @@
+import { commentsAtom } from "@/atoms/commentsAtom"
 import { userAtom } from "@/atoms/userAtom"
 import { isTokenExpired } from "@/utils/isTokenExpired"
 import { useAtom } from "jotai"
@@ -5,8 +6,9 @@ import { useState } from "react"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 
-export const AddNewComment = ({ id }: { id: string }) => {
+export const AddNewComment = ({ id, handleIncrementCommentsCount }: { id: string, handleIncrementCommentsCount: () => void }) => {
   const [user, setUser] = useAtom(userAtom)
+  const [, setComments] = useAtom(commentsAtom)
   const [content, setContent] = useState('')
 
   const addNewComment = async () => {
@@ -29,7 +31,7 @@ export const AddNewComment = ({ id }: { id: string }) => {
         headers['Authorization'] = `Bearer ${token}`
       }
 
-      const response = await fetch(`https://threadnest-backend.onrender.com/api/comments${id}`, {
+      const response = await fetch(`https://threadnest-backend.onrender.com/api/comments/${id}`, {
         method: 'POST',
         headers: headers,
         body: JSON.stringify({ content })
@@ -38,7 +40,9 @@ export const AddNewComment = ({ id }: { id: string }) => {
       if (response.ok) {
         console.log('Comments fetched succesfully')
         const data = await response.json()
+        handleIncrementCommentsCount()
         console.log(data)
+        setComments((prevComments) => [data, ...prevComments])
         setContent('')
       } else {
         console.error('Fetch failed with status:', response.status)

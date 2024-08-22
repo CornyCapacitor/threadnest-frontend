@@ -19,3 +19,9 @@ export type Comment = {
   upvoted: boolean,
   createdAt: string,
 }
+
+export type User = {
+  token: string | null;
+  email: string | null;
+  username: string | null;
+};

@@ -60,6 +60,17 @@ const PostPage = ({ params }: { params: { id: string } }) => {
     }
   }, [user, setUser, id, setPost])
 
+  const handleIncrementCommentsCount = () => {
+    if (post) {
+      setPost(
+        (prevPost) => {
+          if (!prevPost) return null // or return prevPost, not sure which one shall I include
+          return { ...prevPost, commentsCount: prevPost.commentsCount + 1 }
+        }
+      )
+    }
+  }
+
   useEffect(() => {
     if (user === null) {
       setPageLoading(false)
@@ -86,8 +97,8 @@ const PostPage = ({ params }: { params: { id: string } }) => {
       <main className="flex flex-col flex-grow items-center pt-12 pb-12">
         <div className="flex flex-col gap-2 w-full lg:w-[60%]">
           <PostCard post={post} disabledCommButton={true} />
-          <AddNewComment id={id} />
-          <CommentsSection id={id} />
+          <AddNewComment {...{ id, handleIncrementCommentsCount }} />
+          <CommentsSection {...{ id }} />
         </div>
       </main>
     )
