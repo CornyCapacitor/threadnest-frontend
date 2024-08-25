@@ -1,8 +1,8 @@
-import { Post } from '@/app/types/postType'
+import { Post } from '@/app/types/dataTypes'
 import { formatDistanceToNow } from 'date-fns'
 import Image from 'next/image'
 import { CommentButton } from './CommentButton'
-import { UpvoteButton } from './UpvoteButton'
+import { UpvotePostButton } from './UpvotePostButton'
 
 const PostCard = ({ post, disabledCommButton }: { post: Post, disabledCommButton?: boolean }) => {
   return (
@@ -32,7 +32,7 @@ const PostCard = ({ post, disabledCommButton }: { post: Post, disabledCommButton
       </p>
 
       <div className="flex gap-4 pt-2">
-        <UpvoteButton
+        <UpvotePostButton
           postId={post._id}
           isUpvoted={post.upvoted}
           count={post.upvotesCount}

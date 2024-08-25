@@ -4,11 +4,13 @@ import { commentsAtom } from "@/atoms/commentsAtom"
 import { userAtom } from "@/atoms/userAtom"
 import { isTokenExpired } from "@/utils/isTokenExpired"
 import { useAtom } from "jotai"
+import CommentCardSkeleton from "../skeletons/CommentCardSkeleton"
+import CommentCard from "./CommentCard"
 
 export const CommentsSection = ({ id }: { id: string }) => {
   const [user, setUser] = useAtom(userAtom)
   const [comments, setComments] = useAtom(commentsAtom)
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   const fetchComments = async () => {
     if (!user) return
@@ -40,7 +42,6 @@ export const CommentsSection = ({ id }: { id: string }) => {
         const data = await response.json()
         console.log(data)
         setComments(data)
-        setLoading(false)
       } else {
         console.error('Fetch failed with status:', response.status)
         const errorData = await response.json()
@@ -51,6 +52,8 @@ export const CommentsSection = ({ id }: { id: string }) => {
       }
     } catch (error) {
       console.error(error)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -59,11 +62,18 @@ export const CommentsSection = ({ id }: { id: string }) => {
   }, [])
 
   return (
-    <div className="min-w-[350px] flex flex-col p-5 rounded-lg w-full gap-5 bg-slate-900 border border-slate-700 shadow-md">
+    <div className="min-w-[350px] flex flex-col p-2 rounded-lg w-full gap-2 bg-slate-900 border border-slate-700 shadow-md">
       {comments && (
         comments.map((comment) => (
-          <div key={comment._id}>{comment.content}</div>
+          <CommentCard key={comment._id} {...{ comment }} />
         ))
+      )}
+      {loading && (
+        <>
+          <CommentCardSkeleton />
+          <CommentCardSkeleton />
+          <CommentCardSkeleton />
+        </>
       )}
     </div>
   )

@@ -6,7 +6,7 @@ import { useState } from 'react'
 import { Button } from '../ui/button'
 
 
-export const UpvoteButton = ({ count, isUpvoted, postId }: { count: number, isUpvoted: boolean, postId: string }) => {
+export const UpvotePostButton = ({ count, isUpvoted, postId }: { count: number, isUpvoted: boolean, postId: string }) => {
   const [user, setUser] = useAtom(userAtom)
   const [upvoted, setUpvoted] = useState(isUpvoted)
   const [upvotesCount, setUpvotesCount] = useState(count)

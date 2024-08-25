@@ -48,7 +48,6 @@ export default function Home() {
         console.log(data)
         setPosts((prevPosts) => ([...prevPosts, ...data]));
         setPostsPage((prevPage) => prevPage + 1);
-        setPageLoading(false)
       } else {
         console.error('Fetch failed with status:', response.status)
         const errorData = await response.json()
@@ -59,6 +58,8 @@ export default function Home() {
       }
     } catch (error) {
       console.error(error)
+    } finally {
+      setPageLoading(false)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);

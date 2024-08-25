@@ -1,7 +1,6 @@
 'use client'
 
 import { userAtom } from "@/atoms/userAtom"
-import { MyTailSpin } from "@/components/ui/tailspin"
 import { useAtom } from "jotai"
 import { useRouter } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
@@ -10,6 +9,7 @@ import { Post } from "@/app/types/dataTypes"
 import { AddNewComment } from "@/components/layout/AddNewComment"
 import { CommentsSection } from "@/components/layout/CommentsSection"
 import PostCard from "@/components/layout/PostCard"
+import PostCardSkeleton from "@/components/skeletons/PostCardSkeleton"
 import { isTokenExpired } from "@/utils/isTokenExpired"
 
 const PostPage = ({ params }: { params: { id: string } }) => {
@@ -57,6 +57,8 @@ const PostPage = ({ params }: { params: { id: string } }) => {
       }
     } catch (error) {
       console.error(error)
+    } finally {
+      setPageLoading(false)
     }
   }, [user, setUser, id, setPost])
 
@@ -72,37 +74,31 @@ const PostPage = ({ params }: { params: { id: string } }) => {
   }
 
   useEffect(() => {
-    if (user === null) {
-      setPageLoading(false)
-    } else {
-      setPageLoading(false)
+    if (user) {
       fetchPost()
     }
   }, [user, fetchPost])
 
-  if (pageLoading) {
-    return (
-      <main className="flex flex-grow flex-col items-center justify-center p-24">
-        <MyTailSpin size={50} />
-      </main>
-    )
-  }
-
-  if (!user) {
+  if (!pageLoading && !user) {
     return router.push('/')
   }
 
-  if (post) {
-    return (
-      <main className="flex flex-col flex-grow items-center pt-12 pb-12">
-        <div className="flex flex-col gap-2 w-full lg:w-[60%]">
-          <PostCard post={post} disabledCommButton={true} />
-          <AddNewComment {...{ id, handleIncrementCommentsCount }} />
-          <CommentsSection {...{ id }} />
-        </div>
-      </main>
-    )
-  }
+  if (user) return (
+    <main className="flex flex-col flex-grow items-center pt-12 pb-12">
+      <div className="flex flex-col gap-2 w-full lg:w-[60%]">
+        {post && (
+          <>
+            <PostCard post={post} disabledCommButton={true} />
+            <AddNewComment {...{ id, handleIncrementCommentsCount }} />
+            <CommentsSection {...{ id }} />
+          </>
+        )}
+        {pageLoading && (
+          <PostCardSkeleton />
+        )}
+      </div>
+    </main>
+  )
 }
 
 export default PostPage
