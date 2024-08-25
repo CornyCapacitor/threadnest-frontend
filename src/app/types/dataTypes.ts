@@ -21,7 +21,8 @@ export type Comment = {
 }
 
 export type User = {
-  token: string | null;
-  email: string | null;
-  username: string | null;
+  token: string;
+  email: string;
+  username: string;
+  id: string;
 };
