@@ -46,7 +46,7 @@ const PostPage = ({ params }: { params: { id: string } }) => {
       })
 
       if (response.ok) {
-        console.log('Data fetched succesfully')
+        console.log('Post fetched succesfully')
         const data = await response.json()
         console.log(data)
         setPost(data)

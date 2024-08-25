@@ -43,7 +43,7 @@ export default function Home() {
       })
 
       if (response.ok) {
-        console.log("Data fetched succesfully")
+        console.log("Posts fetched succesfully")
         const data = await response.json();
         console.log(data)
         setPosts((prevPosts) => ([...prevPosts, ...data]));

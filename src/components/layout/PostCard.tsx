@@ -19,6 +19,9 @@ const PostCard = ({ post, disabledCommButton }: { post: Post, disabledCommButton
           <p className="text-slate-200 font-medium">
             {post.author_username}
           </p>
+          {/* Temporary view */}
+          {post.author_id}
+          {/* Temporary view */}
         </div>
         <p>{formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}</p>
       </div>

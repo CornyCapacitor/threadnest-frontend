@@ -18,6 +18,9 @@ const CommentCard = ({ comment }: { comment: Comment }) => {
           <p className="text-slate-200 font-medium">
             {comment.author_username}
           </p>
+          {/* Temporary view */}
+          {comment.author_id}
+          {/* Temporary view */}
         </div>
         <p>{formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}</p>
       </div>
