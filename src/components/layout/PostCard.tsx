@@ -34,7 +34,7 @@ const PostCard = ({ post, disabledCommButton }: { post: Post, disabledCommButton
         <div className="flex gap-2 items-center">
           {user && user.id == post.author_id && (
             <Link href={`/editPost/${post._id}`}>
-              <Button className="h-6">Edit</Button>
+              <Button className="h-6 font-semibold">Edit</Button>
             </Link>
           )}
           <p>{formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}</p>
