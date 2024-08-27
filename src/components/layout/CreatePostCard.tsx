@@ -1,4 +1,4 @@
-import { Post } from '@/app/types/postType';
+import { Post } from '@/app/types/dataTypes';
 import { postsAtom } from '@/atoms/postsAtom';
 import { userAtom } from '@/atoms/userAtom';
 import { isTokenExpired } from '@/utils/isTokenExpired';
