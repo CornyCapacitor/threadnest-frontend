@@ -55,7 +55,7 @@ export const ChangeUsername = () => {
         successAlert({
           text: 'Username updated succesfully!',
           successFunction: () => {
-            setUser({ email: user.email, token: user.token, username: newUsername })
+            setUser({ email: user.email, token: user.token, username: newUsername, id: user.id })
             setNewUsername('')
             setNewUsernameRepeat('')
             setError(null)
