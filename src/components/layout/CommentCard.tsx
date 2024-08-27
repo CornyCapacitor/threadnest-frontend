@@ -6,23 +6,69 @@ import { formatDistanceToNow } from 'date-fns'
 import { useAtom } from 'jotai'
 import Image from 'next/image'
 import { useState } from 'react'
+import { questionAlert } from '../ui/alerts'
 import { Button } from '../ui/button'
-import { Input } from '../ui/input'
+import { MyTailSpin } from '../ui/tailspin'
+import { Textarea } from '../ui/textarea'
 import { errorToast, successToast } from '../ui/toasts'
 import { UpvoteCommentButton } from './UpvoteCommentButton'
 
 const CommentCard = ({ comment }: { comment: Comment }) => {
   const [user, setUser] = useAtom(userAtom)
-  const [comments, setComments] = useAtom(commentsAtom)
+  const [, setComments] = useAtom(commentsAtom)
   const [commentLoading, setCommentLoading] = useState(false)
   const [editContent, setEditContent] = useState<string>('')
   const [editMode, setEditMode] = useState(false)
 
-  const deleteComment = (id: string) => {
+  const deleteComment = async (id: string) => {
     console.log('Deleting comment')
+    if (!user) return
+
+    try {
+      setCommentLoading(true)
+
+      const { token } = user
+
+      if (token && isTokenExpired(token)) {
+        console.log('Token has expired, you should re-login')
+        setUser(null)
+        return
+      }
+
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json'
+      }
+
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`
+      }
+
+      const response = await fetch(`https://threadnest-backend.onrender.com/api/comments/${id}`, {
+        method: 'DELETE',
+        headers: headers,
+      })
+
+      if (response.ok) {
+        const data = await response.json();
+        setEditMode(false)
+        setComments(prevComments =>
+          prevComments.filter(comment => comment._id !== id)
+        )
+        successToast({
+          text: data.message
+        })
+      } else {
+        const data = await response.json()
+        console.log(data)
+      }
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setCommentLoading(false)
+    }
   }
 
-  const updateComment = async (id: string) => {
+  const updateComment = async (id: string, content: string) => {
     console.log('Updating comment')
     if (!user) return
 
@@ -37,9 +83,6 @@ const CommentCard = ({ comment }: { comment: Comment }) => {
         text: 'Comment cannot be empty'
       })
     }
-
-    const commentId = comment._id
-    const commentPosition = comments.find(comment => comment._id === commentId)
 
     try {
       setCommentLoading(true)
@@ -64,7 +107,7 @@ const CommentCard = ({ comment }: { comment: Comment }) => {
       const response = await fetch(`https://threadnest-backend.onrender.com/api/comments/${id}?action=${action}`, {
         method: 'PATCH',
         headers: headers,
-        body: JSON.stringify({ content: editContent })
+        body: JSON.stringify({ content })
       })
 
       if (response.ok) {
@@ -73,7 +116,7 @@ const CommentCard = ({ comment }: { comment: Comment }) => {
         setEditContent('')
         setComments(prevComments =>
           prevComments.map(comment =>
-            comment._id === commentId ? { ...comment, content: data.content } : comment
+            comment._id === id ? { ...comment, content: data.content } : comment
           )
         )
         successToast({
@@ -90,8 +133,20 @@ const CommentCard = ({ comment }: { comment: Comment }) => {
     }
   }
 
+  const handleDeleteComment = (id: string) => {
+    questionAlert({
+      text: 'Are you sure you want to delete this comment?',
+      confirmFunction: () => {
+        deleteComment(id)
+      },
+      cancelFunction: () => {
+        return
+      }
+    })
+  }
+
   return (
-    <div className="min-w-[350px] flex flex-col p-5 rounded-lg w-full gap-5 bg-slate-900 border border-slate-700 shadow-md">
+    <div className={`min-w-[350px] flex flex-col p-5 rounded-lg w-full gap-5 bg-slate-900 border border-slate-700 shadow-md ${commentLoading ? 'opacity-50 pointer-events-none' : 'slide-in'}`}>
       <div className="flex gap-2 justify-between pb-2 border-b border-slate-700">
         <div className="flex gap-2 items-center">
           <Image
@@ -114,8 +169,8 @@ const CommentCard = ({ comment }: { comment: Comment }) => {
           )}
           {editMode &&
             <>
-              <Button className="h-6 bg-red-500 hover:bg-red-600 text-slate-100 font-semibold" onClick={() => deleteComment(comment._id)} disabled={commentLoading}>Delete</Button>
-              <Button className="h-6 bg-blue-500 hover:bg-blue-600 text-slate-100 font-semibold" onClick={() => updateComment(comment._id)} disabled={commentLoading}>Save</Button>
+              <Button className="h-6 bg-red-500 hover:bg-red-600 text-slate-100 font-semibold" onClick={() => handleDeleteComment(comment._id)} disabled={commentLoading}>Delete</Button>
+              <Button className="h-6 bg-blue-500 hover:bg-blue-600 text-slate-100 font-semibold" onClick={() => updateComment(comment._id, editContent)} disabled={commentLoading}>Save</Button>
             </>
           }
           <p>{formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}</p>
@@ -124,21 +179,25 @@ const CommentCard = ({ comment }: { comment: Comment }) => {
 
       <p className="text-slate-300 text-wrap break-all">
         {editMode && !commentLoading ? (
-          <Input className="" value={editContent} onChange={(e) => setEditContent(e.target.value)} />
+          <Textarea className="" value={editContent} onChange={(e) => setEditContent(e.target.value)} />
         ) : editMode && commentLoading ? (
-          <p>Kind of spinner, but dunno if I want it here</p>
+          <div className="flex items-center justify-center">
+            <MyTailSpin size={100} />
+          </div>
         ) : (
           comment.content
         )}
       </p>
 
-      <div>
-        <UpvoteCommentButton
-          commentId={comment._id}
-          isUpvoted={comment.upvoted}
-          count={comment.upvotesCount}
-        />
-      </div>
+      {!commentLoading &&
+        <div>
+          <UpvoteCommentButton
+            commentId={comment._id}
+            isUpvoted={comment.upvoted}
+            count={comment.upvotesCount}
+          />
+        </div>
+      }
     </div>
   )
 }

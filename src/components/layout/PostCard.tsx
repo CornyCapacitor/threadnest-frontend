@@ -13,7 +13,7 @@ const PostCard = ({ post, disabledCommButton }: { post: Post, disabledCommButton
   const [user, setUser] = useAtom(userAtom)
 
   return (
-    <div className="min-w-[350px] flex flex-col p-5 rounded-lg w-full gap-5 bg-slate-900 border border-slate-700 shadow-md">
+    <div className="min-w-[350px] flex flex-col p-5 rounded-lg w-full gap-5 bg-slate-900 border border-slate-700 shadow-md slide-in">
       <div className="flex gap-2 justify-between pb-2 border-b border-slate-700">
         <div className="flex gap-2 items-center">
           <Image
