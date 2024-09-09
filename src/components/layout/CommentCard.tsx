@@ -76,12 +76,14 @@ const CommentCard = ({ comment }: { comment: Comment }) => {
       errorToast({
         text: 'Comment cannot exceed 500 characters'
       })
+      return
     }
 
     if (!editContent) {
       errorToast({
         text: 'Comment cannot be empty'
       })
+      return
     }
 
     try {

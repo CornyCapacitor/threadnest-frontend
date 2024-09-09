@@ -1,18 +1,26 @@
 'use client'
 
+import { postsAtom, postsPageAtom } from "@/atoms/postsAtom"
 import { userAtom } from "@/atoms/userAtom"
+import { questionAlert, successAlert } from "@/components/ui/alerts"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { MyTailSpin } from "@/components/ui/tailspin"
 import { Textarea } from "@/components/ui/textarea"
+import { errorToast } from "@/components/ui/toasts"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { isTokenExpired } from "@/utils/isTokenExpired"
 import { useAtom } from "jotai"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
 const EditPage = ({ params }: { params: { id: string } }) => {
   const { id } = params
+  const router = useRouter()
+
+  const [posts, setPosts] = useAtom(postsAtom)
+  const [postsPage, setPostsPage] = useAtom(postsPageAtom)
 
   const [user, setUser] = useAtom(userAtom)
   const [title, setTitle] = useState('')
@@ -20,7 +28,7 @@ const EditPage = ({ params }: { params: { id: string } }) => {
   const [loading, setLoading] = useState(false)
   const [pageLoading, setPageLoading] = useState(true)
 
-  const fetchPost = async (id: string) => {
+  const fetchPost = async () => {
     if (!user) return
 
     try {
@@ -59,16 +67,161 @@ const EditPage = ({ params }: { params: { id: string } }) => {
           console.log('You should relogin')
         }
       }
+      setPageLoading(false)
+    } catch (error) {
+      console.error(error)
+      return
+    }
+  }
+
+  const deletePost = async () => {
+    if (!user) return
+    setLoading(true)
+
+    try {
+      const { token } = user
+
+      if (token && isTokenExpired(token)) {
+        console.log('Token has expired, you should re-login')
+        setUser(null)
+        return
+      }
+
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json'
+      }
+
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`
+      }
+
+      const response = await fetch(`https://threadnest-backend.onrender.com/api/posts/${id}`, {
+        method: 'DELETE',
+        headers: headers
+      })
+
+      if (response.ok) {
+        console.log('Post deleted succesfully')
+        successAlert({
+          text: 'Post deleted succesfully',
+          successFunction: () => {
+            handleReturn()
+          }
+        })
+      } else {
+        console.error('Fetch failed with status:', response.status)
+        const errorData = await response.json()
+        console.error('Error data:', errorData)
+        if (errorData.error === 'TokenExpiredError: jwt expired') {
+          console.log('You should relogin')
+        }
+      }
     } catch (error) {
       console.error(error)
     } finally {
-      setPageLoading(false)
+      setLoading(false)
     }
+  }
+
+  const updatePost = async () => {
+    if (!user) return
+    setLoading(true)
+    const action = 'update'
+
+    if (title.length < 3 || title.length > 250) {
+      errorToast({
+        text: 'Post title must contain 3-250 characters'
+      })
+      return
+    }
+
+    if (content.length < 50 || content.length > 2500) {
+      errorToast({
+        text: 'Post content must contain 50-2500 characters'
+      })
+      return
+    }
+
+    try {
+      const { token } = user
+
+      if (token && isTokenExpired(token)) {
+        console.log('Token has expired, you should re-login')
+        setUser(null)
+        return
+      }
+
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json'
+      }
+
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`
+      }
+
+      const response = await fetch(`https://threadnest-backend.onrender.com/api/posts/${id}?action=${action}`, {
+        method: 'PATCH',
+        headers: headers,
+        body: JSON.stringify({ title, content })
+      })
+
+      if (response.ok) {
+        console.log('Post updated succesfully')
+        // Force new posts fetch
+        setPosts([])
+        setPostsPage(1)
+        successAlert({
+          text: 'Post updated succesfully',
+          successFunction: () => {
+            handleReturn()
+          }
+        })
+      } else {
+        console.error('Fetch failed with status:', response.status)
+        const errorData = await response.json()
+        console.error('Error data:', errorData)
+        if (errorData.error === 'TokenExpiredError: jwt expired') {
+          console.log('You should relogin')
+        }
+      }
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleUpdatePost = () => {
+    questionAlert({
+      text: 'Are you sure you want to update this post?',
+      confirmFunction: () => {
+        updatePost()
+      },
+      cancelFunction: () => {
+        return
+      }
+    })
+  }
+
+  const handleDeletePost = () => {
+    questionAlert({
+      text: 'Are you sure you want to delete this post?',
+      confirmFunction: () => {
+        deletePost()
+      },
+      cancelFunction: () => {
+        return
+      }
+    })
+  }
+
+  const handleReturn = () => {
+    router.push('/')
   }
 
   useEffect(() => {
     if (user && pageLoading) {
-      fetchPost(id)
+      fetchPost()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user])
@@ -135,21 +288,21 @@ const EditPage = ({ params }: { params: { id: string } }) => {
         <div className="flex items-center justify-center gap-4 pt-2">
           <Button
             className="flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-slate-100 font-semibold py-2 px-4 rounded-md"
-            type="submit"
+            onClick={handleUpdatePost}
             disabled={loading}
           >
             {loading ? <MyTailSpin size={25} /> : 'Update post'}
           </Button>
           <Button
             className="flex items-center justify-center bg-red-500 hover:bg-red-600 text-slate-100 font-semibold py-2 px-4 rounded-md"
-            type="submit"
+            onClick={handleDeletePost}
             disabled={loading}
           >
             {loading ? <MyTailSpin size={25} /> : 'Delete post'}
           </Button>
           <Button
             className="flex items-center justify-center font-semibold py-2 px-4 rounded-md"
-            type="submit"
+            onClick={handleReturn}
             disabled={loading}
           >
             {loading ? <MyTailSpin size={25} /> : 'Return'}
