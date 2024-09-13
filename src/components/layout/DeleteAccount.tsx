@@ -5,6 +5,7 @@ import { isTokenExpired } from "@/utils/isTokenExpired"
 
 import { errorAlert, questionAlert, successAlert } from "@/components/ui/alerts"
 import { MyTailSpin } from "@/components/ui/tailspin"
+import { createHeaders } from "@/utils/createHeaders"
 import { useAtom } from "jotai"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
@@ -23,27 +24,20 @@ export const DeleteAccount = () => {
       const { token } = user
 
       if (token && isTokenExpired(token)) {
-        console.log('Token has expired, you should re-login')
+        errorAlert({
+          text: 'Your session expired. Please login again'
+        })
         setUser(null)
         return
       }
 
-      const headers: HeadersInit = {
-        'Content-Type': 'application/json'
-      }
-
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`
-      }
-
       const response = await fetch('https://threadnest-backend.onrender.com/api/users', {
         method: 'DELETE',
-        headers: headers
+        headers: createHeaders(token)
       })
 
       if (response.ok) {
         const data = await response.json()
-        console.log(data)
         successAlert({
           text: 'Account deleted succesfully',
           successFunction: () => {

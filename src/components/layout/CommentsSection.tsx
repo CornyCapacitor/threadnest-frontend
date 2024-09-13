@@ -1,9 +1,11 @@
 import { commentsAtom } from "@/atoms/commentsAtom"
 import { userAtom } from "@/atoms/userAtom"
+import { createHeaders } from "@/utils/createHeaders"
 import { isTokenExpired } from "@/utils/isTokenExpired"
 import { useAtom } from "jotai"
 import { useEffect, useState } from "react"
 import CommentCardSkeleton from "../skeletons/CommentCardSkeleton"
+import { errorAlert } from "../ui/alerts"
 import CommentCard from "./CommentCard"
 
 export const CommentsSection = ({ id }: { id: string }) => {
@@ -23,36 +25,25 @@ export const CommentsSection = ({ id }: { id: string }) => {
         return
       }
 
-      const headers: HeadersInit = {
-        'Content-Type': 'application/json'
-      }
-
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`
-      }
-
       const response = await fetch(`https://threadnest-backend.onrender.com/api/comments/${id}`, {
         method: 'GET',
-        headers: headers
+        headers: createHeaders(token)
       })
 
       if (response.ok) {
-        console.log('Comments fetched succesfully')
         const data = await response.json()
-        console.log(data)
         setComments(data)
       } else if (response.status === 404) {
 
       } else {
-        console.error('Fetch failed with status:', response.status)
         const errorData = await response.json()
-        console.error('Error data:', errorData)
         if (errorData.error === 'TokenExpiredError: jwt expired') {
-          console.log('You should relogin')
+          errorAlert({
+            text: 'Your session expired. Please login again'
+          })
         }
       }
     } catch (error) {
-      console.error(error)
     } finally {
       setLoading(false)
     }
@@ -60,6 +51,7 @@ export const CommentsSection = ({ id }: { id: string }) => {
 
   useEffect(() => {
     fetchComments()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (

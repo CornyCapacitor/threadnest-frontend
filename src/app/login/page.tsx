@@ -19,7 +19,7 @@ const LoginPage = () => {
   const [loading, setLoading] = useState(false)
   const [pageLoading, setPageLoading] = useState(true)
   const [user, setUser] = useAtom(userAtom)
-  const [, setPosts] = useAtom(postsAtom)
+  const [posts, setPosts] = useAtom(postsAtom)
 
   const router = useRouter()
 
@@ -92,6 +92,12 @@ const LoginPage = () => {
     }
   }, [user])
 
+  useEffect(() => {
+    if (user) {
+      router.push('/');
+    }
+  }, [user, router]);
+
   if (pageLoading) {
     return (
       <main className="flex flex-grow flex-col items-center justify-center p-24">
@@ -100,9 +106,6 @@ const LoginPage = () => {
     )
   }
 
-  if (user) {
-    return router.push('/')
-  }
 
   return (
     <main className="flex flex-grow flex-col items-center justify-center p-24">

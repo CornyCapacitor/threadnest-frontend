@@ -1,8 +1,10 @@
 import { userAtom } from '@/atoms/userAtom'
+import { createHeaders } from '@/utils/createHeaders'
 import { isTokenExpired } from '@/utils/isTokenExpired'
 import { useAtom } from 'jotai'
 import Image from 'next/image'
 import { useState } from 'react'
+import { errorAlert } from '../ui/alerts'
 import { Button } from '../ui/button'
 
 
@@ -13,7 +15,6 @@ export const UpvoteCommentButton = ({ count, isUpvoted, commentId }: { count: nu
   const [loading, setLoading] = useState(false)
 
   const handleUpvote = async (postId: string) => {
-    console.log(`Upvoting/devoting comment with id: ${commentId}`)
     setLoading(true)
     if (!user) return
 
@@ -21,7 +22,9 @@ export const UpvoteCommentButton = ({ count, isUpvoted, commentId }: { count: nu
       const { token } = user
 
       if (token && isTokenExpired(token)) {
-        console.log('Token has expired, you should re-login')
+        errorAlert({
+          text: 'Your session expired. Please login again'
+        })
         setUser(null)
         return
       }
@@ -30,17 +33,9 @@ export const UpvoteCommentButton = ({ count, isUpvoted, commentId }: { count: nu
       setUpvoted(!upvoted);
       setUpvotesCount(prevCount => upvoted ? prevCount - 1 : prevCount + 1);
 
-      const headers: HeadersInit = {
-        'Content-Type': 'application/json'
-      }
-
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`
-      }
-
       const response = await fetch(`https://threadnest-backend.onrender.com/api/comments/${commentId}?action=upvote`, {
         method: 'PATCH',
-        headers: headers
+        headers: createHeaders(token)
       })
 
       if (response.ok) {
@@ -49,23 +44,20 @@ export const UpvoteCommentButton = ({ count, isUpvoted, commentId }: { count: nu
         // Realistic update
         setUpvoted(data.upvoted)
         setUpvotesCount(data.upvotesCount)
-        console.log('Updated succesfully')
-
       } else {
-        console.error('Fetch failed with status:', response.status)
         const errorData = await response.json()
-        console.error('Error data:', errorData)
 
         // Turning back the optimistic update
         setUpvoted(isUpvoted);
         setUpvotesCount(count);
 
         if (errorData.error === 'TokenExpiredError: jwt expired') {
-          console.log('You should relogin')
+          errorAlert({
+            text: 'Your session expired. Please login again'
+          })
         }
       }
     } catch (error) {
-      console.error(error)
     } finally {
       setLoading(false)
     }
@@ -82,7 +74,7 @@ export const UpvoteCommentButton = ({ count, isUpvoted, commentId }: { count: nu
         width={16}
         height={16}
       />
-      <span className="font-semibold mt-1">{upvotesCount}</span>
+      <span className="font-semibold mt-1">{upvotesCount ? upvotesCount : '0'}</span>
     </Button>
   )
 }

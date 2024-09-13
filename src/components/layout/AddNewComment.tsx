@@ -1,8 +1,10 @@
 import { commentsAtom } from "@/atoms/commentsAtom"
 import { userAtom } from "@/atoms/userAtom"
+import { createHeaders } from "@/utils/createHeaders"
 import { isTokenExpired } from "@/utils/isTokenExpired"
 import { useAtom } from "jotai"
 import { useState } from "react"
+import { errorAlert } from "../ui/alerts"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import { MyTailSpin } from "../ui/tailspin"
@@ -21,42 +23,33 @@ export const AddNewComment = ({ id, handleIncrementCommentsCount }: { id: string
       const { token } = user
 
       if (token && isTokenExpired(token)) {
-        console.log('Token has expired, you should re-login')
+        errorAlert({
+          text: 'Your session expired. Please login again'
+        })
         setUser(null)
         return
       }
 
-      const headers: HeadersInit = {
-        'Content-Type': 'application/json'
-      }
-
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`
-      }
-
       const response = await fetch(`https://threadnest-backend.onrender.com/api/comments/${id}`, {
         method: 'POST',
-        headers: headers,
+        headers: createHeaders(token),
         body: JSON.stringify({ content })
       })
 
       if (response.ok) {
-        console.log('Comments fetched succesfully')
         const data = await response.json()
         handleIncrementCommentsCount()
-        console.log(data)
         setComments((prevComments) => [data, ...prevComments])
         setContent('')
       } else {
-        console.error('Fetch failed with status:', response.status)
         const errorData = await response.json()
-        console.error('Error data:', errorData)
         if (errorData.error === 'TokenExpiredError: jwt expired') {
-          console.log('You should relogin')
+          errorAlert({
+            text: 'Your session expired. Please login again'
+          })
         }
       }
     } catch (error) {
-      console.error(error)
     } finally {
       setLoading(false)
     }

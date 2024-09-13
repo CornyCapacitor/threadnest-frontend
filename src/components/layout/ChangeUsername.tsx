@@ -10,6 +10,7 @@ import { useAtom } from "jotai"
 import { useState } from "react"
 
 import { errorAlert, questionAlert, successAlert } from "@/components/ui/alerts"
+import { createHeaders } from "@/utils/createHeaders"
 import Image from "next/image"
 
 export const ChangeUsername = () => {
@@ -30,28 +31,21 @@ export const ChangeUsername = () => {
       const { token } = user
 
       if (token && isTokenExpired(token)) {
-        console.log('Token has expired, you should re-login')
+        errorAlert({
+          text: 'Your session expired. Please login again'
+        })
         setUser(null)
         return
       }
 
-      const headers: HeadersInit = {
-        'Content-Type': 'application/json'
-      }
-
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`
-      }
-
       const response = await fetch(`https://threadnest-backend.onrender.com/api/users?action=${action}`, {
         method: 'PATCH',
-        headers: headers,
+        headers: createHeaders(token),
         body: JSON.stringify({ username: newUsername })
       })
 
       if (response.ok) {
         const data = await response.json()
-        console.log(data)
         successAlert({
           text: 'Username updated succesfully!',
           successFunction: () => {

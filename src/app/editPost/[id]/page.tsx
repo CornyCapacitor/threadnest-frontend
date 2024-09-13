@@ -2,13 +2,14 @@
 
 import { postsAtom, postsPageAtom } from "@/atoms/postsAtom"
 import { userAtom } from "@/atoms/userAtom"
-import { questionAlert, successAlert } from "@/components/ui/alerts"
+import { errorAlert, questionAlert, successAlert } from "@/components/ui/alerts"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { MyTailSpin } from "@/components/ui/tailspin"
 import { Textarea } from "@/components/ui/textarea"
 import { errorToast } from "@/components/ui/toasts"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { createHeaders } from "@/utils/createHeaders"
 import { isTokenExpired } from "@/utils/isTokenExpired"
 import { useAtom } from "jotai"
 import Image from "next/image"
@@ -35,41 +36,32 @@ const EditPage = ({ params }: { params: { id: string } }) => {
       const { token } = user
 
       if (token && isTokenExpired(token)) {
-        console.log('Token has expired, you should re-login')
+        errorAlert({
+          text: 'Your session expired. Please login again'
+        })
         setUser(null)
         return
       }
 
-      const headers: HeadersInit = {
-        'Content-Type': 'application/json'
-      }
-
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`
-      }
-
       const response = await fetch(`https://threadnest-backend.onrender.com/api/posts/${id}`, {
         method: 'GET',
-        headers: headers
+        headers: createHeaders(token)
       })
 
       if (response.ok) {
-        console.log('Post fetched succesfully')
         const data = await response.json()
-        console.log(data)
         setTitle(data.title)
         setContent(data.content)
       } else {
-        console.error('Fetch failed with status:', response.status)
         const errorData = await response.json()
-        console.error('Error data:', errorData)
         if (errorData.error === 'TokenExpiredError: jwt expired') {
-          console.log('You should relogin')
+          errorAlert({
+            text: 'Your session expired. Please login again'
+          })
         }
       }
       setPageLoading(false)
     } catch (error) {
-      console.error(error)
       return
     }
   }
@@ -82,26 +74,19 @@ const EditPage = ({ params }: { params: { id: string } }) => {
       const { token } = user
 
       if (token && isTokenExpired(token)) {
-        console.log('Token has expired, you should re-login')
+        errorAlert({
+          text: 'Your session expired. Please login again'
+        })
         setUser(null)
         return
       }
 
-      const headers: HeadersInit = {
-        'Content-Type': 'application/json'
-      }
-
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`
-      }
-
       const response = await fetch(`https://threadnest-backend.onrender.com/api/posts/${id}`, {
         method: 'DELETE',
-        headers: headers
+        headers: createHeaders(token)
       })
 
       if (response.ok) {
-        console.log('Post deleted succesfully')
         successAlert({
           text: 'Post deleted succesfully',
           successFunction: () => {
@@ -109,15 +94,14 @@ const EditPage = ({ params }: { params: { id: string } }) => {
           }
         })
       } else {
-        console.error('Fetch failed with status:', response.status)
         const errorData = await response.json()
-        console.error('Error data:', errorData)
         if (errorData.error === 'TokenExpiredError: jwt expired') {
-          console.log('You should relogin')
+          errorAlert({
+            text: 'Your session expired. Please login again'
+          })
         }
       }
     } catch (error) {
-      console.error(error)
     } finally {
       setLoading(false)
     }
@@ -146,27 +130,20 @@ const EditPage = ({ params }: { params: { id: string } }) => {
       const { token } = user
 
       if (token && isTokenExpired(token)) {
-        console.log('Token has expired, you should re-login')
+        errorAlert({
+          text: 'Your session expired. Please login again'
+        })
         setUser(null)
         return
       }
 
-      const headers: HeadersInit = {
-        'Content-Type': 'application/json'
-      }
-
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`
-      }
-
       const response = await fetch(`https://threadnest-backend.onrender.com/api/posts/${id}?action=${action}`, {
         method: 'PATCH',
-        headers: headers,
+        headers: createHeaders(token),
         body: JSON.stringify({ title, content })
       })
 
       if (response.ok) {
-        console.log('Post updated succesfully')
         // Force new posts fetch
         setPosts([])
         setPostsPage(1)
@@ -177,15 +154,14 @@ const EditPage = ({ params }: { params: { id: string } }) => {
           }
         })
       } else {
-        console.error('Fetch failed with status:', response.status)
         const errorData = await response.json()
-        console.error('Error data:', errorData)
         if (errorData.error === 'TokenExpiredError: jwt expired') {
-          console.log('You should relogin')
+          errorAlert({
+            text: 'Your session expired. Please login again'
+          })
         }
       }
     } catch (error) {
-      console.error(error)
     } finally {
       setLoading(false)
     }

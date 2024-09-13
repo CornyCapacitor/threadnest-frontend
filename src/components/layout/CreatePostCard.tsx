@@ -1,10 +1,12 @@
 import { Post } from '@/app/types/dataTypes';
 import { postsAtom } from '@/atoms/postsAtom';
 import { userAtom } from '@/atoms/userAtom';
+import { createHeaders } from '@/utils/createHeaders';
 import { isTokenExpired } from '@/utils/isTokenExpired';
 import { useAtom } from 'jotai';
 import Image from 'next/image';
 import { useState } from 'react';
+import { errorAlert } from '../ui/alerts';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { MyTailSpin } from '../ui/tailspin';
@@ -39,35 +41,26 @@ const CreatePostCard = () => {
       const { token } = user
 
       if (token && isTokenExpired(token)) {
-        console.log('Token has expired, you should re-login')
+        errorAlert({
+          text: 'Your session expired. Please login again'
+        })
         setUser(null)
         return
       }
 
-      const headers: HeadersInit = {
-        'Content-Type': 'application/json'
-      }
-
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`
-      }
-
       const response = await fetch('https://threadnest-backend.onrender.com/api/posts', {
         method: 'POST',
-        headers: headers,
+        headers: createHeaders(token),
         body: JSON.stringify({ title, content })
       })
 
       if (response.ok) {
-        console.log('Post created succesfully')
         const data = await response.json()
-        console.log(data)
         setTitle('')
         setContent('')
         setError(null)
       }
     } catch (error) {
-      console.error('Error:', error)
     } finally {
       setLoading(false)
     }

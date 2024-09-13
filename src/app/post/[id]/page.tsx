@@ -10,6 +10,8 @@ import { AddNewComment } from "@/components/layout/AddNewComment"
 import { CommentsSection } from "@/components/layout/CommentsSection"
 import PostCard from "@/components/layout/PostCard"
 import PostCardSkeleton from "@/components/skeletons/PostCardSkeleton"
+import { errorAlert } from "@/components/ui/alerts"
+import { createHeaders } from "@/utils/createHeaders"
 import { isTokenExpired } from "@/utils/isTokenExpired"
 
 const PostPage = ({ params }: { params: { id: string } }) => {
@@ -27,36 +29,25 @@ const PostPage = ({ params }: { params: { id: string } }) => {
       const { token } = user
 
       if (token && isTokenExpired(token)) {
-        console.log('Token has expired, you should re-login')
+        errorAlert({
+          text: 'Your session expired. Please login again'
+        })
         setUser(null)
         return
       }
 
-      const headers: HeadersInit = {
-        'Content-Type': 'application/json'
-      }
-
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`
-      }
-
       const response = await fetch(`https://threadnest-backend.onrender.com/api/posts/${id}`, {
         method: 'GET',
-        headers: headers
+        headers: createHeaders(token)
       })
 
       if (response.ok) {
-        console.log('Post fetched succesfully')
         const data = await response.json()
-        console.log(data)
         setPost(data)
       } else {
-        console.error('Fetch failed with status:', response.status)
         const errorData = await response.json()
-        console.error('Error data:', errorData)
       }
     } catch (error) {
-      console.error(error)
     } finally {
       setPageLoading(false)
     }

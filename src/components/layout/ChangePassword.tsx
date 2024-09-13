@@ -7,9 +7,10 @@ import { isTokenExpired } from "@/utils/isTokenExpired"
 import { useAtom } from "jotai"
 import { useState } from "react"
 
-import { questionAlert, successAlert } from '@/components/ui/alerts'
+import { errorAlert, questionAlert, successAlert } from '@/components/ui/alerts'
 import { Button } from '@/components/ui/button'
 import { MyTailSpin } from '@/components/ui/tailspin'
+import { createHeaders } from '@/utils/createHeaders'
 import Image from "next/image"
 import validator from "validator"
 
@@ -32,28 +33,21 @@ export const ChangePassword = () => {
       const { token } = user
 
       if (token && isTokenExpired(token)) {
-        console.log('Token has expired, you should re-login')
+        errorAlert({
+          text: 'Your session expired. Please login again'
+        })
         setUser(null)
         return
       }
 
-      const headers: HeadersInit = {
-        'Content-Type': 'application/json'
-      }
-
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`
-      }
-
       const response = await fetch(`https://threadnest-backend.onrender.com/api/users?action=${action}`, {
         method: 'PATCH',
-        headers: headers,
+        headers: createHeaders(token),
         body: JSON.stringify({ password: newPassword })
       })
 
       if (response.ok) {
         const data = await response.json()
-        console.log(data)
         successAlert({
           text: 'Password updated succesfully!',
           successFunction: () => {
@@ -64,7 +58,6 @@ export const ChangePassword = () => {
         })
       }
     } catch (error) {
-      console.error('error', error)
     } finally {
       setLoading(false)
     }

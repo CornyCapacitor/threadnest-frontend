@@ -1,12 +1,13 @@
 import { Comment } from '@/app/types/dataTypes'
 import { commentsAtom } from '@/atoms/commentsAtom'
 import { userAtom } from '@/atoms/userAtom'
+import { createHeaders } from '@/utils/createHeaders'
 import { isTokenExpired } from '@/utils/isTokenExpired'
 import { formatDistanceToNow } from 'date-fns'
 import { useAtom } from 'jotai'
 import Image from 'next/image'
 import { useState } from 'react'
-import { questionAlert } from '../ui/alerts'
+import { errorAlert, questionAlert } from '../ui/alerts'
 import { Button } from '../ui/button'
 import { MyTailSpin } from '../ui/tailspin'
 import { Textarea } from '../ui/textarea'
@@ -21,7 +22,6 @@ const CommentCard = ({ comment }: { comment: Comment }) => {
   const [editMode, setEditMode] = useState(false)
 
   const deleteComment = async (id: string) => {
-    console.log('Deleting comment')
     if (!user) return
 
     try {
@@ -30,22 +30,16 @@ const CommentCard = ({ comment }: { comment: Comment }) => {
       const { token } = user
 
       if (token && isTokenExpired(token)) {
-        console.log('Token has expired, you should re-login')
+        errorAlert({
+          text: 'Your session expired. Please login again'
+        })
         setUser(null)
         return
       }
 
-      const headers: HeadersInit = {
-        'Content-Type': 'application/json'
-      }
-
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`
-      }
-
       const response = await fetch(`https://threadnest-backend.onrender.com/api/comments/${id}`, {
         method: 'DELETE',
-        headers: headers,
+        headers: createHeaders(token),
       })
 
       if (response.ok) {
@@ -59,17 +53,14 @@ const CommentCard = ({ comment }: { comment: Comment }) => {
         })
       } else {
         const data = await response.json()
-        console.log(data)
       }
     } catch (error) {
-      console.error(error)
     } finally {
       setCommentLoading(false)
     }
   }
 
   const updateComment = async (id: string, content: string) => {
-    console.log('Updating comment')
     if (!user) return
 
     if (editContent.length > 500) {
@@ -93,22 +84,16 @@ const CommentCard = ({ comment }: { comment: Comment }) => {
       const { token } = user
 
       if (token && isTokenExpired(token)) {
-        console.log('Token has expired, you should re-login')
+        errorAlert({
+          text: 'Your session expired. Please login again'
+        })
         setUser(null)
         return
       }
 
-      const headers: HeadersInit = {
-        'Content-Type': 'application/json'
-      }
-
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`
-      }
-
       const response = await fetch(`https://threadnest-backend.onrender.com/api/comments/${id}?action=${action}`, {
         method: 'PATCH',
-        headers: headers,
+        headers: createHeaders(token),
         body: JSON.stringify({ content })
       })
 
@@ -126,10 +111,8 @@ const CommentCard = ({ comment }: { comment: Comment }) => {
         })
       } else {
         const data = await response.json()
-        console.log(data)
       }
     } catch (error) {
-      console.error(error)
     } finally {
       setCommentLoading(false)
     }
