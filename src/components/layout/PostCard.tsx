@@ -26,9 +26,6 @@ const PostCard = ({ post, disabledCommButton }: { post: Post, disabledCommButton
           <p className="text-slate-200 font-medium">
             {post.author_username}
           </p>
-          {/* Temporary view */}
-          {post.author_id}
-          {/* Temporary view */}
         </div>
 
         <div className="flex gap-2 items-center">
